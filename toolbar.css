@@ -1,0 +1,292 @@
+/*
+ * Apple Music web player: replace the floating pill at the bottom with a
+ * plain toolbar across the top of the content area.
+ *
+ * - one flat bar spanning the content column; the sidebar keeps its own column
+ * - standard macOS toolbar height; the sidebar's logo is moved up onto the same line
+ * - the sidebar's glass and colors, including on tinted playlist and album pages
+ * - playback controls leading, now playing centered, then secondary actions
+ *   and the page's own buttons (share, more) trailing
+ */
+
+:root {
+  --amt-toolbar-height: 52px; /* standard macOS toolbar height */
+  --amt-artwork: 36px;
+  --amt-page-actions-width: 96px; /* room for the page's share and more buttons */
+  --amt-side-panel-width: 300px; /* Apple's lyrics and Up Next panel */
+}
+
+/* Toolbar: pin the player bar to the top of the content column */
+.player-bar.player-bar__floating-player {
+  align-self: start !important;
+  position: sticky !important;
+  top: 0 !important;
+  bottom: auto !important;
+  isolation: isolate;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: var(--amt-toolbar-height) !important;
+  background: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-bottom: 1px solid var(--amt-sidebar-border, var(--labelDivider)); /* same line as the sidebar's edge */
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/*
+ * Same glass as the sidebar: its translucent tint with its saturate and blur
+ * backdrop, so content scrolling under the toolbar shows through blurred.
+ * The colors and filter are copied from the sidebar by sidebar-color.js.
+ * The glass sits on a background layer: a backdrop filter on the toolbar
+ * itself would misplace the lyrics panel, which is positioned from inside it.
+ */
+.player-bar.player-bar__floating-player::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--amt-sidebar-bg, var(--navSidebarBG));
+  -webkit-backdrop-filter: var(--amt-sidebar-backdrop, saturate(2.2) blur(16px));
+  backdrop-filter: var(--amt-sidebar-backdrop, saturate(2.2) blur(16px));
+}
+
+.player-bar__floating-player .wrapper {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100%;
+  padding: 0 24px;
+}
+
+/* Leading controls | centered now playing | trailing actions */
+.player-bar__floating-player .chrome-player {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  /* Equal minimum widths on both sides keep the middle centered when the bar is narrow */
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 520px) minmax(200px, 1fr) !important;
+  align-items: center;
+  column-gap: 24px;
+}
+
+/* Remove the pill: its background, drop shadow and outline */
+.player-bar__floating-player .chrome-player::before,
+.player-bar__floating-player .chrome-player::after {
+  display: none !important;
+  content: none !important;
+}
+
+.player-bar__floating-player .chrome-player__playback-controls {
+  justify-self: start;
+}
+
+.player-bar__floating-player .chrome-player__actions {
+  justify-self: end;
+}
+
+/* Now playing: artwork, title and artist, progress line under the text */
+.player-bar__floating-player .chrome-player__lcd {
+  width: 100%;
+  height: var(--amt-artwork) !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.player-bar__floating-player .chrome-player__lcd > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.player-bar__floating-player .player-lcd {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
+  align-items: center;
+  grid-template-columns: var(--amt-artwork) 1fr auto !important;
+  grid-template-rows: 100% 0 !important;
+}
+
+.player-bar__floating-player .player-lcd__artwork {
+  width: var(--amt-artwork) !important;
+  height: var(--amt-artwork) !important;
+}
+
+.player-bar__floating-player .player-lcd__artwork .artwork-component {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 6px !important;
+  overflow: hidden;
+}
+
+/* Title and artist sit tight at the top so the progress line fits below them */
+.player-bar__floating-player .player-lcd__metadata {
+  align-self: start;
+  padding-top: 0 !important;
+  margin-top: -3px !important;
+}
+
+.player-bar__floating-player .player-lcd__progress {
+  position: absolute !important;
+  top: auto !important;
+  bottom: 0 !important;
+  left: calc(var(--amt-artwork) + 8px);
+  right: 0 !important; /* full width of now playing, without running past it */
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.player-bar__floating-player .player-lcd__progress .progress-container {
+  margin: 0 !important;
+}
+
+/* Ellipsis menu: at the right end of now playing, above the progress line */
+.player-bar__floating-player .player-lcd__after-metadata {
+  align-self: start !important;
+  justify-self: end;
+}
+
+.player-bar__floating-player .player-lcd__after-metadata,
+.player-bar__floating-player .player-lcd__after-metadata * {
+  max-height: 30px;
+}
+
+/* Nothing playing: the Apple logo, centered */
+.player-bar__floating-player .player-lcd.player-lcd--empty {
+  grid-template-columns: 1fr !important;
+  justify-items: center;
+}
+
+.player-bar__floating-player .player-lcd.player-lcd--empty > * {
+  grid-column: 1 / -1;
+}
+
+/*
+ * One color for every toolbar button: playback, lyrics, Up Next, volume and
+ * the page's share and more buttons. Shuffle and repeat keep the accent color
+ * while they are on, and disabled buttons stay faded.
+ */
+.player-bar__floating-player .wrapper,
+.container-detail-header .secondary-actions .cloud-buttons {
+  --amt-icon: var(--systemPrimary);
+  --playback-modifier-default-override: var(--amt-icon);
+  color: var(--amt-icon) !important;
+}
+
+.player-bar__floating-player amp-playback-controls-shuffle,
+.player-bar__floating-player amp-playback-controls-repeat,
+.player-bar__floating-player amp-playback-controls-play,
+.player-bar__floating-player .playback-controls__skip,
+.player-bar__floating-player .skip__button,
+.player-bar__floating-player .chrome-player__actions button,
+.container-detail-header .secondary-actions .cloud-buttons button {
+  --skip-color-disabled: var(--amt-icon);
+  --playback-controls-play-color: var(--amt-icon);
+  color: var(--amt-icon) !important;
+}
+
+.player-bar__floating-player .skip__button svg,
+.player-bar__floating-player .skip__button svg *,
+.player-bar__floating-player .chrome-player__actions button:not(.lyrics__button--active) svg,
+.container-detail-header .secondary-actions .cloud-buttons svg {
+  fill: currentColor !important;
+  color: currentColor !important;
+}
+
+.player-bar__floating-player .skip__button:disabled {
+  opacity: 0.4;
+}
+
+/*
+ * Page buttons (share, more) on playlists and albums: move them from the top
+ * right corner of the page into the toolbar's trailing edge, without the
+ * rounded backdrop they have on the page.
+ */
+.container-detail-header .secondary-actions:has(> .secondary-actions .cloud-buttons),
+.container-detail-header .secondary-actions:has(> .cloud-buttons) {
+  position: fixed !important;
+  top: calc((var(--amt-toolbar-height) - 36px) / 2) !important;
+  right: 24px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 9901 !important;
+  margin: 0 !important;
+}
+
+.container-detail-header .secondary-actions .secondary-actions {
+  position: static !important;
+}
+
+.cloud-buttons.cloud-buttons--with-platter,
+.cloud-buttons.cloud-buttons--with-platter::before,
+.cloud-buttons.cloud-buttons--with-platter::after {
+  background: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* Make room inside the trailing column so the middle column stays centered */
+.app-container:has(.container-detail-header .cloud-buttons) .player-bar__floating-player .chrome-player__actions {
+  margin-right: var(--amt-page-actions-width) !important;
+}
+
+/*
+ * Side panel (lyrics, Up Next): the toolbar ends where the panel starts, and
+ * the page's share and more buttons move with it.
+ */
+@media (min-width: 1000px) {
+  .app-container.is-drawer-open .player-bar.player-bar__floating-player {
+    width: auto !important;
+    max-width: none !important;
+    margin-right: var(--amt-side-panel-width) !important;
+  }
+
+  .app-container.is-drawer-open .container-detail-header .secondary-actions:has(> .secondary-actions .cloud-buttons) {
+    right: calc(24px + var(--amt-side-panel-width)) !important;
+  }
+}
+
+/* The page content sits in its own layers, which would keep the buttons under the toolbar */
+.app-container:has(.container-detail-header .cloud-buttons) .scrollable-page,
+.app-container:has(.container-detail-header .cloud-buttons) .scrollable-page .content-container {
+  z-index: auto !important;
+}
+
+/*
+ * Sidebar logo: shrink its header from 72px to the toolbar height so the logo
+ * sits on the same line as the toolbar controls. Only the wrapper div; the
+ * logo's svg has the class "logo" too and must keep its own size.
+ */
+@media (min-width: 484px) {
+  .navigation .navigation__header {
+    margin-top: 0 !important;
+    height: var(--amt-toolbar-height) !important;
+  }
+
+  .navigation .navigation__header > div.logo {
+    height: var(--amt-toolbar-height) !important;
+    min-height: 0 !important;
+  }
+
+}
+
+/* Keep page titles clear of the toolbar; content still scrolls underneath it */
+.scrollable-page {
+  box-sizing: border-box;
+  padding-top: var(--amt-toolbar-height) !important;
+}
