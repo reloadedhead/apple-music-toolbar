@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Apple Music Toolbar",
+  "name": "Music but with a Toolbar",
   "version": "1.0.0",
   "description": "Moves the Apple Music web player controls into a macOS-style toolbar at the top of the window.",
   "content_scripts": [

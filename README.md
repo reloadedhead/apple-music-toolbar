@@ -1,4 +1,4 @@
-# Apple Music Toolbar
+# Music but with a Toolbar
 
 A Chrome extension that restyles the [Apple Music web player](https://music.apple.com). It replaces the floating player at the bottom with a toolbar across the top of the window, styled like a macOS toolbar.
 
