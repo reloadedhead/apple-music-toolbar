@@ -2,7 +2,13 @@
   "manifest_version": 3,
   "name": "Music but with a Toolbar",
   "version": "1.0.0",
-  "description": "Moves the Apple Music web player controls into a macOS-style toolbar at the top of the window.",
+  "description": "Moves the Apple Music web player into a macOS-style top toolbar. Unofficial: not affiliated with or endorsed by Apple Inc.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://music.apple.com/*", "https://beta.music.apple.com/*"],
