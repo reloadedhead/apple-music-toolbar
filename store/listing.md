@@ -21,7 +21,8 @@ Comes from the manifest `description`, 122 characters (limit 132):
 Music but with a Toolbar gives the Apple Music web player a macOS-style toolbar across the top of the window.
 
 What changes
-- Playback controls on the left, now playing in the center, and lyrics, Up Next and volume on the right
+- Playback controls and volume on the left, now playing in the center, and lyrics and Up Next on the right
+- The volume slider is always visible, to the right of the volume icon; the icon still mutes and unmutes
 - The share and more buttons from playlist and album pages move into the toolbar
 - Same glass, color and border as the sidebar, including the tinted colors on playlist and album pages
 - The toolbar ends where the lyrics or Up Next panel starts

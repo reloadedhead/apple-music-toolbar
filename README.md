@@ -2,7 +2,8 @@
 
 A Chrome extension that restyles the [Apple Music web player](https://music.apple.com). It replaces the floating player at the bottom with a toolbar across the top of the window, styled like a macOS toolbar.
 
-- Playback controls on the left, now playing in the center, and lyrics, Up Next and volume on the right
+- Playback controls and volume on the left, now playing in the center, and lyrics and Up Next on the right
+- The volume slider is always visible, to the right of the volume icon; the icon still mutes and unmutes
 - The share and more buttons from playlist and album pages move into the toolbar
 - Same glass, color and border as the sidebar, including the tinted colors on playlist and album pages
 - The toolbar ends where the lyrics or Up Next panel starts
@@ -20,7 +21,8 @@ After changing a file, click the reload button on the extension's card and refre
 
 - `toolbar.css` holds all the styling. Sizes are variables at the top.
 - `sidebar-color.js` copies the sidebar's color, border and glass effect into CSS variables for the toolbar. Apple sets these in a stylesheet that CSS can't read.
-- `manifest.json` loads both on `music.apple.com`.
+- `volume.js` keeps Apple's volume slider open. Apple only shows it after you click the icon and hides it again when focus leaves.
+- `manifest.json` loads them on `music.apple.com`.
 - `icons/` holds the extension icons (16, 32, 48 and 128 px). The 128 px one has the art at 96 px with a 16 px transparent margin, as the Chrome Web Store asks.
 - `design/` holds the icon source: `icon.icon` is an Icon Composer document and `icon-1024.png` is its render.
 - `store/` holds the Chrome Web Store listing text and the privacy policy. It is not part of the extension package.

@@ -17,7 +17,7 @@
     },
     {
       "matches": ["https://music.apple.com/*", "https://beta.music.apple.com/*"],
-      "js": ["sidebar-color.js"],
+      "js": ["sidebar-color.js", "volume.js"],
       "run_at": "document_idle"
     }
   ]

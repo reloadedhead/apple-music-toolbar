@@ -14,6 +14,13 @@
   --amt-artwork: 36px;
   --amt-page-actions-width: 96px; /* room for the page's share and more buttons */
   --amt-side-panel-width: 300px; /* Apple's lyrics and Up Next panel */
+  --amt-controls-width: 152px; /* shuffle, back, play, forward and repeat */
+  --amt-volume-slider-width: 80px;
+  --amt-volume-gap: var(--bodyGutter, 40px); /* controls to volume: same as sidebar to controls */
+  /* Controls, gap, volume icon (24), icon to slider (6) and slider */
+  --amt-side-column-min: calc(
+    var(--amt-controls-width) + var(--amt-volume-gap) + 24px + 6px + var(--amt-volume-slider-width)
+  );
 }
 
 /* Toolbar: pin the player bar to the top of the content column */
@@ -59,7 +66,8 @@
   width: 100% !important;
   max-width: none !important;
   height: 100%;
-  padding: 0 24px;
+  /* Same side margin as the page content, so the controls line up with page titles */
+  padding: 0 var(--bodyGutter, 40px);
 }
 
 /* Leading controls | centered now playing | trailing actions */
@@ -70,7 +78,9 @@
   padding: 0 !important;
   border-radius: 0 !important;
   /* Equal minimum widths on both sides keep the middle centered when the bar is narrow */
-  grid-template-columns: minmax(200px, 1fr) minmax(0, 520px) minmax(200px, 1fr) !important;
+  grid-template-columns:
+    minmax(var(--amt-side-column-min), 1fr) minmax(0, 520px)
+    minmax(var(--amt-side-column-min), 1fr) !important;
   align-items: center;
   column-gap: 24px;
 }
@@ -84,6 +94,60 @@
 
 .player-bar__floating-player .chrome-player__playback-controls {
   justify-self: start;
+  width: var(--amt-controls-width);
+}
+
+/*
+ * Volume: icon with the slider to its right, always visible, next to the
+ * playback controls. Apple only renders the slider after the icon is clicked
+ * (volume.js does that); here it loses its popup look and joins the toolbar.
+ * The group sits on top of the left column, since it can't move out of the
+ * actions group on the right without moving elements the page manages.
+ */
+.player-bar__floating-player .chrome-volume {
+  position: absolute !important;
+  top: 50%;
+  left: calc(var(--amt-controls-width) + var(--amt-volume-gap));
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  width: auto !important;
+  height: 28px !important;
+  transform: translateY(-50%);
+}
+
+.player-bar__floating-player .chrome-volume__button {
+  order: 0;
+}
+
+.player-bar__floating-player .chrome-volume__slider {
+  order: 1;
+  position: static !important;
+  inset: auto !important;
+  width: var(--amt-volume-slider-width) !important;
+  height: 28px !important;
+  padding: 0 !important;
+  background: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  pointer-events: all !important;
+  transition: none !important;
+}
+
+.player-bar__floating-player .chrome-volume__slider .volume-control {
+  position: static !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+}
+
+.player-bar__floating-player .chrome-volume__slider .volume-control__range {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .player-bar__floating-player .chrome-player__actions {
@@ -219,7 +283,7 @@
 .container-detail-header .secondary-actions:has(> .cloud-buttons) {
   position: fixed !important;
   top: calc((var(--amt-toolbar-height) - 36px) / 2) !important;
-  right: 24px !important;
+  right: var(--bodyGutter, 40px) !important;
   left: auto !important;
   bottom: auto !important;
   z-index: 9901 !important;
@@ -257,7 +321,7 @@
   }
 
   .app-container.is-drawer-open .container-detail-header .secondary-actions:has(> .secondary-actions .cloud-buttons) {
-    right: calc(24px + var(--amt-side-panel-width)) !important;
+    right: calc(var(--bodyGutter, 40px) + var(--amt-side-panel-width)) !important;
   }
 }
 
