@@ -34,3 +34,7 @@ The styles depend on Apple's class names, such as `.player-bar__floating-player`
 Music but with a Toolbar is an independent, unofficial project. It is not affiliated with, authorized, maintained, sponsored or endorsed by Apple Inc. or any of its affiliates. Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries and regions. All other trademarks belong to their respective owners.
 
 The extension only changes how the Apple Music web player looks in your browser. It does not collect, store or send any data, and it does not modify, download or redistribute any Apple content.
+
+## License
+
+[MIT](LICENSE)
