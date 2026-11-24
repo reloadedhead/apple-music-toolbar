@@ -1,38 +1,39 @@
-// Apple only shows the volume slider after the volume icon is clicked, and hides
-// it again when focus leaves it. Expand it and keep it expanded.
+// Apple only renders the volume slider after the volume icon is clicked, and
+// collapses it again on mouseleave and when focus leaves the group. Expand it
+// and keep it expanded.
 //
 // While the slider is hidden, a click on the icon only shows it. Once it is
 // shown, a click mutes and unmutes, so the icon keeps working as before.
 
+const GROUP_SELECTOR = ".chrome-volume";
 const EXPANDED_CLASS = "chrome-volume--expanded";
 const MAX_ATTEMPTS = 5;
 
-let playerBar = null;
 let scheduled = false;
 let attempts = 0;
+let lastGroup = null;
 
-const playerBarObserver = new MutationObserver(scheduleExpand);
+// Apple's collapse handlers sit on the group itself. Stop these events in the
+// capture phase, before they reach them, so the slider never closes.
+function keepOpen(event) {
+  if (event.target instanceof Element && event.target.closest(GROUP_SELECTOR)) {
+    event.stopImmediatePropagation();
+  }
+}
+document.addEventListener("mouseleave", keepOpen, true);
+document.addEventListener("focusout", keepOpen, true);
 
 function expand() {
   scheduled = false;
 
-  const bar = document.querySelector(".player-bar");
-  if (!bar) return;
-
-  if (bar !== playerBar) {
-    playerBarObserver.disconnect();
-    // The volume group can be replaced when the player redraws, so watch the whole bar
-    playerBarObserver.observe(bar, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-    playerBar = bar;
-  }
-
-  const group = bar.querySelector(".chrome-volume");
+  const group = document.querySelector(`.player-bar ${GROUP_SELECTOR}`);
   if (!group) return;
+
+  // A new group (the player was redrawn) gets a fresh set of attempts
+  if (group !== lastGroup) {
+    lastGroup = group;
+    attempts = 0;
+  }
 
   if (group.classList.contains(EXPANDED_CLASS)) {
     attempts = 0;
@@ -51,7 +52,12 @@ function scheduleExpand() {
   requestAnimationFrame(expand);
 }
 
-// The player is drawn after load and can be replaced with the whole app
-new MutationObserver(scheduleExpand).observe(document.body, { childList: true });
+// The player is drawn after load and its bar can be replaced (for example when
+// the window is resized or the app redraws), so watch the whole page, not one
+// element that may get detached.
+new MutationObserver(scheduleExpand).observe(document.documentElement, {
+  childList: true,
+  subtree: true,
+});
 
 scheduleExpand();

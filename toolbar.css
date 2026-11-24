@@ -135,6 +135,7 @@
   box-shadow: none !important;
   opacity: 1 !important;
   pointer-events: all !important;
+  transform: none !important; /* Apple squeezes it to half width until expanded */
   transition: none !important;
 }
 

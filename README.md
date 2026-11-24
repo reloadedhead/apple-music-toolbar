@@ -21,7 +21,7 @@ After changing a file, click the reload button on the extension's card and refre
 
 - `toolbar.css` holds all the styling. Sizes are variables at the top.
 - `sidebar-color.js` copies the sidebar's color, border and glass effect into CSS variables for the toolbar. Apple sets these in a stylesheet that CSS can't read.
-- `volume.js` keeps Apple's volume slider open. Apple only shows it after you click the icon and hides it again when focus leaves.
+- `volume.js` keeps Apple's volume slider open. Apple only renders it after you click the icon and collapses it on mouse leave and focus loss, so the script clicks the icon and blocks those collapse events.
 - `manifest.json` loads them on `music.apple.com`.
 - `icons/` holds the extension icons (16, 32, 48 and 128 px). The 128 px one has the art at 96 px with a 16 px transparent margin, as the Chrome Web Store asks.
 - `design/` holds the icon source: `icon.icon` is an Icon Composer document and `icon-1024.png` is its render.
